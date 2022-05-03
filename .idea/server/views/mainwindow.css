@@ -1,0 +1,110 @@
+body {
+    margin: 0;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
+    font-size: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 200px 1fr 0px;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #0B352E;
+    color: #E5E5E5;
+}
+
+.container .butNinput,
+.list {
+    padding: 8px;
+    border: 10px solid #082621;
+    border-radius: 12px;
+}
+
+.map {
+    padding: 8px;
+    border: 10px solid #082621;
+    border-radius: 12px;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 3;
+}
+
+.butNinput {
+    grid-row-start: 1;
+    grid-row-end: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 13px;
+    padding-top: 100px !important;
+}
+
+#startdate,
+#enddate {
+    color: #E5E5E5;
+    width: 180px;
+    height: 35px;
+    background-color: #0B352E;
+    border: 4px solid #082621;
+    border-radius: 5px;
+    float: left;
+}
+
+#button {
+    color: #E5E5E5;
+    background-color: #0B352E;
+    border: 4px solid #082621;
+    padding: 10px 30px;
+    float: left;
+    border-radius: 5px;
+}
+
+#exit {
+    color: #E5E5E5;
+    background-color: #0B352E;
+    background-image: url('exit.jpg');
+    background-size: 100%;
+    background-position: 45% 53%;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 100%;
+    padding: 20px;
+}
+
+.list {
+    grid-row-start: 2;
+    grid-row-end: 3;
+}
+
+ol {
+    background: #0B352E;
+    list-style-type: decimal-leading-zero;
+    list-style-position: inside;
+    margin: 0;
+    padding: 5px;
+}
+
+ol li {
+    background: #082621;
+    border-radius: 12px;
+    margin: 8px;
+    padding-left: 15px;
+    line-height: 3em;
+}
+
+ol li .showmap {
+    color: #E5E5E5;
+    background-color: #0B352E;
+    border: 4px solid #082621;
+    border-radius: 15px;
+    padding: 10px 30px;
+    float: right;
+}

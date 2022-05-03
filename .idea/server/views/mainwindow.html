@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="mainwindow.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="butNinput">
+            <input type="datetime-local" id="startdate" value="">
+            <input type="datetime-local" id="enddate" value="">
+            <button type="submit" id="button" name="button" value="sendData">SHOW</button>
+            <a href="/views">
+                <button type="button" id="exit" name="exit"></button>
+            </a>
+        </div>
+        <div class="list">
+            <ol type="1" class="Liste" id="ollist">
+                <p style="text-align: center;">ARABALAR</p>
+            </ol>
+        </div>
+        <div class="map" id="map">
+        </div>
+    </div>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io('localhost:3000');
+        let ol = document.querySelector("#ollist");
+        const myol = document.getElementById("ollist");
+        let startdate = document.querySelector("#startdate");
+        let enddate = document.querySelector("#enddate");
+        let submitdatas = document.querySelector("#button");
+        let exitbutton = document.querySelector("#exit");
+        let selectedCarID
+        let map;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: {
+                    lat: 59.334591,
+                    lng: 18.063240
+                },
+                zoom: 8,
+            });
+        }
+        socket.on('send lastcarIDs', function(carIDs, date) {
+            for (let i = 0; i < date.length; i++) {
+                const element = date[i].replace(" ", "T")
+
+                startdate.value = element
+                startdate.stepDown(30)
+                enddate.value = element
+                var carid = JSON.stringify(carIDs[i])
+                socket.emit('send 30mindatetime', {
+                    startdate: startdate.value,
+                    enddate: enddate.value,
+                    carID: carid
+                })
+            }
+        })
+
+        socket.on('send carIDs', function(carIDs) {
+            for (let index = 0; index < carIDs.length; index++) {
+                let li = document.createElement("li");
+                ol.appendChild(li);
+                li.appendChild(document.createTextNode("ID:" + carIDs[index]));
+                let sendButton = document.createElement('button');
+                sendButton.addEventListener('click', event => {
+                    selectedCarID = carIDs[index]
+                })
+                li.appendChild(sendButton);
+                sendButton.innerHTML = 'SEND';
+                sendButton.classList.add("showmap");
+                myol.appendChild(li);
+            }
+
+        })
+        let markerArr = []
+        socket.on('connect', function(data) {
+            submitdatas.addEventListener('click', event => {
+                console.log("gönderiliyo");
+                socket.emit('send datetimes', {
+                    carID: selectedCarID,
+                    startdate: startdate.value,
+                    enddate: enddate.value
+                });
+
+            })
+        })
+        socket.on('connect', function(data) {
+            socket.on('send30mindocuments', function(documents) {
+                console.log(documents.length);
+
+                for (let i = 0; i < documents.length; i++) {
+                    console.log(markerArr.length);
+                    let myLatLng = {
+                        lat: parseFloat(documents[i].latitude),
+                        lng: parseFloat(documents[i].langitude)
+                    }
+                    var marker = new google.maps.Marker({
+                        position: myLatLng,
+                        map,
+                    });
+                    markerArr.push(marker)
+                }
+
+            })
+        })
+
+
+
+        socket.on('connect', function(args) {
+            socket.on('sendcardocuments', function(document) {
+                markerArr.forEach(marker => {
+                    marker.setMap(null)
+                });
+                document.sort((a, b) => +(a.date > b.date) || -(a.date < b.date))
+                for (let i = 0; i < document.length; i++) {
+                    console.log(markerArr.length);
+                    let myLatLng = {
+                        lat: parseFloat(document[i].latitude),
+                        lng: parseFloat(document[i].langitude)
+                    }
+                    var marker = new google.maps.Marker({
+                        position: myLatLng,
+                        map,
+                    });
+                    markerArr.push(marker)
+                }
+            })
+        })
+    </script>
+
+
+    <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR-API-KEY&callback=initMap&weekly"></script>
+</body>
+
+</html>
